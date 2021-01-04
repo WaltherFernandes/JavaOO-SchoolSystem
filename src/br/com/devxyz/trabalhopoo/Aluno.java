@@ -9,7 +9,10 @@ public class Aluno {
 	private String nomeDoPai;
 	private String nomeDaMae;
 	private String endereco;
-	private ArrayList<NotaDisciplina> discs = new ArrayList<NotaDisciplina>();
+	private ArrayList<NotaDisciplina> discs;
+	
+	private static int auxiliarMatricula = 1;
+	
 	
 	public long getNumMatricula() {
 		return numMatricula;
@@ -48,4 +51,24 @@ public class Aluno {
 		this.discs = discs;
 	}
 	
+	// Method responsible to create a new Student object
+	public Aluno(String nome, String nomeDoPai, String nomeDaMae, String endereco) {
+		this.numMatricula = auxiliarMatricula;
+		auxiliarMatricula++;
+		
+		this.nome = nome;
+		this.nomeDaMae = nomeDaMae;
+		this.nomeDoPai = nomeDoPai;
+		this.endereco = endereco;
+		
+		this.discs = new ArrayList<NotaDisciplina>();
+	}
+	// Method responsible to instantiate student objects
+	public static Aluno getInstance(String nome, String nomeDoPai, String nomeDaMae, String endereco) {
+		if(nome != null && nomeDoPai != null && nomeDaMae != null && endereco != null) {
+			return new Aluno(nome, nomeDoPai, nomeDaMae, endereco);
+		}else {
+			return null;
+		}
+	}
 }
