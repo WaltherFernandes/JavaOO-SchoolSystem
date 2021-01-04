@@ -124,6 +124,16 @@ public class Sistema {
     	
     	return null;
     }
+    // Method responsible to find subjects on ArrayList by name
+    public Disciplina buscarDisciplinaPorNome(String nomeDisciplina) {
+    	for( Disciplina d : disciplinas ) {
+    		if(d.getNome().equals(nomeDisciplina)) {
+    			return d;
+    		}
+    	}
+    	
+    	return null;
+    }
 
     
     // Method responsible to change student name
@@ -174,4 +184,23 @@ public class Sistema {
     	
     	return messagePass;
     }
+    // Method responsible to register students in subjects
+
+
+
+	public String cadastrarAlunoInClass(NotaDisciplina newND, Aluno a) {
+		if(a == null || newND == null) { return "Falha ao cadastrar aluno!"; }
+		int novoAluno = alunos.indexOf(a);
+		alunos.get(novoAluno).getDiscs().add(newND);
+		return "Aluno " + a.getNome() + " cadastrado com sucesso na disciplina " + newND.getDisc().getNome();
+	}
+
+	// Method responsible to check if aluno is registered in some subject
+	public boolean hasDiscs(Aluno a) {
+		int idAluno = alunos.indexOf(a);
+		Aluno newAluno = alunos.get(idAluno);
+		boolean hadSubjects = newAluno.getDiscs().size() != 0;
+		
+		return hadSubjects;
+	}
 }

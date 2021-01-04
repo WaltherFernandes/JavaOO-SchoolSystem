@@ -5,16 +5,21 @@ import java.util.Scanner;
 /**
  * 
  * @author Walther Fernandes, Mateus Rezende
+ * 
+ * @dictionary Disciplina: subject; Aluno: student; 
  *
  */
 
 public class Main {
+	
+	static boolean canShowRegisterOptions = true; // List students / subjects before you give the name
 	
 	static Scanner scn = new Scanner(System.in);
 	static Sistema sistema = Sistema.getInstance();
 	
 	public static void main(String[] args) {
 		sistema.init();
+		
 		
 		int opcao;
 		while(true) {
@@ -29,8 +34,9 @@ public class Main {
 			println("6 - Editar aluno");
 			println("7 - Cadastrar aluno em disciplina");
 			println("8 - Detalhar aluno");
+			println("9 - Listar matrículas");
 			
-			opcao = getOpcao(); while(opcao == -1) { opcao = getOpcao(); }
+			opcao = getOpcao(); while(opcao == -1) { opcao = getsOpcao(); }
 			
 			switch(opcao) {
 				case 0:
@@ -44,16 +50,25 @@ public class Main {
 					excluirDisciplina();
 					break;
 				case 3:
-					listarDisciplinas();
+					listarDisciplinas(6);
 					break;
 				case 4:
 					cadastrarAluno();
 					break;
 				case 5: 
-					listarAlunos();
+					listarAlunos(6);
 					break;
 				case 6:
 					editarAlunos();
+					break;
+				case 7:
+					registerAlunoInClass();
+					break;
+				case 8:
+					detalharAluno();
+					break;
+				case 9:
+					listarMatriculas();
 					break;
 				default:
 					println("Opção inválida!");
@@ -86,13 +101,14 @@ public class Main {
 	}
 	// Exclude subject
 	static void excluirDisciplina() {
+		if(canShowRegisterOptions) { listarDisciplinas(3); }
 		println("Digite o nome da disciplina que você deseja excluir: ");
 		String nome = scnString();
 		println(sistema.excluirDisciplina(nome));
 		wait(2);
 	}
 	// List subjects
-	static void listarDisciplinas() {
+	static void listarDisciplinas(int time) {
 		int tamanhoMaiorNome = 0;
 		for(Disciplina d : sistema.getDisciplinas()) {
 			if(d.getNome().length() > tamanhoMaiorNome) {
@@ -110,7 +126,7 @@ public class Main {
 			print(String.valueOf(d.getNumVagas())); Main.printSpace(6 - String.valueOf(d.getNumVagas()).length());
 			println(d.getNomeProfessor());
 		}
-		wait(6);
+		wait(time);
 	}
 	// Register student
 	static void cadastrarAluno() {
@@ -126,7 +142,7 @@ public class Main {
 		sistema.cadastrarAluno(nome, nomeDoPai, nomeDaMae, endereco);
 	}
 	// List students
-	static void listarAlunos() {	
+	static void listarAlunos(int time) {	
 		int maiorNome = 0;
 		int maiorNomeMae = 0;
 		int maiorNomePai = 0;
@@ -154,10 +170,11 @@ public class Main {
 			print(a.getNomeDoPai()); Main.printSpace(maiorNomePai + 2 - a.getNomeDoPai().length());
 			println(a.getEndereco());
 		}
-		wait(6);
+		wait(time);
 	}
 	// Edit students
 	static void editarAlunos() {
+		if(canShowRegisterOptions) { listarAlunos(3); }
 		clear(15);
 		println("Digite o nome do aluno a ser editado!");
 		String nomeAluno = scnString();
@@ -201,14 +218,99 @@ public class Main {
 			}
 		}
 	}
-	
-	
+	// Register student in new subject
+	static void registerAlunoInClass() {
+		if(canShowRegisterOptions) { listarAlunos(3); }
+		clear(15);
+		
+		println("Digite o nome do aluno: ");
+		String nomeAluno = scnString();
+		Aluno a = sistema.buscarAlunoPorNome(nomeAluno);
+		if(a == null) { println("Aluno não encontrado!"); wait(2); return; }
+		println("Aluno encontrado!");
+
+		if(canShowRegisterOptions) { listarDisciplinas(3); }
+		println("Digite o nome da disciplina: ");
+		String nomeDisciplina = scnStrings();
+		Disciplina d = sistema.buscarDisciplinaPorNome(nomeDisciplina);
+		if(d == null) { println("Aluno não encontrado!"); wait(2); return; }
+		println("Disciplina encontrada!");
+		
+		println("Digite a nota do aluno: ");
+		double nota = scnDouble();
+		if(nota < 0.0) { println("A nota não pode ser menor que 0 "); wait(2); return; }
+		
+		
+		NotaDisciplina newND = NotaDisciplina.getInstance(nota, d);
+		println(sistema.cadastrarAlunoInClass(newND, a));
+		wait(3);
+	}
+	// Detail specific student above his subjects
+	static void detalharAluno() {
+		if(canShowRegisterOptions) { listarAlunos(3); }
+		println("Digite o nome do aluno: ");
+		String nomeAluno = scnString();
+		Aluno a = sistema.buscarAlunoPorNome(nomeAluno);
+		if(a == null) { println("Aluno não encontrado!"); return; }
+		println("Aluno encontrado!");
+		
+		if(!sistema.hasDiscs(a)) { println("Esse aluno não está cadastrado em nenhuma disciplina."); wait(2); return; }
+		
+		int maiorNomeDisciplina = 0;
+		for ( NotaDisciplina nd : a.getDiscs() ) {
+			if(nd.getDisc().getNome().length() > maiorNomeDisciplina) {
+				maiorNomeDisciplina = nd.getDisc().getNome().length();
+			}
+		}
+		
+		print("Aluno"); printSpace( a.getNome().length() + 2 - "Aluno".length() );
+		print("Disciplina"); printSpace(maiorNomeDisciplina + 2 - "Disciplina".length());
+		println("Nota");
+		
+		for( NotaDisciplina nd : a.getDiscs() ) {
+			print(a.getNome()); printSpace(2);
+			print(nd.getDisc().getNome()); printSpace(maiorNomeDisciplina + 2 - nd.getDisc().getNome().length());
+			println(String.valueOf(nd.getNota()));
+		}
+		wait(6);
+	}
+	// List all the registrations
+	static void listarMatriculas() {
+		clear(15);
+		int maiorNome = 0;
+		for(Aluno a : sistema.getAlunos()) {
+			if(a.getNome().length() + 2 > maiorNome) {
+				maiorNome = a.getNome().length() + 2;
+			}
+		}
+		
+		print("Aluno"); printSpace(maiorNome - "Aluno".length());
+		println("Disciplina");
+		for( Aluno a :  sistema.getAlunos() ) {
+			for( NotaDisciplina nd : a.getDiscs() ) {
+				print(a.getNome()); printSpace(maiorNome - a.getNome().length());
+				println(nd.getDisc().getNome());
+			}
+		}
+		wait(4);
+	}
 	
 	
 	// Secondary optional functions
 	static int getOpcao() {
 		int opcao = -1;
 	    try {
+	        opcao = scn.nextInt();
+	        return opcao;
+	    } catch (Exception nfe) {
+	    	println("Digite uma opção válida: ");
+	    }
+	    return opcao;
+	}
+	static int getsOpcao() {
+		int opcao = -1;
+	    try {
+	    	scn.next();
 	        opcao = scn.nextInt();
 	        return opcao;
 	    } catch (Exception nfe) {
@@ -247,12 +349,18 @@ public class Main {
 		String text = scn.nextLine();
 		return text;
 	}
+	static String scnStrings() {
+		String text = scn.nextLine();
+		return text;
+	}
 	static int scnInt() {
 		int number = scn.nextInt();
 		return number;
 	}
 	static double scnDouble() {
-		double number = scn.nextDouble();
+		String numberAux = scn.nextLine();
+		numberAux = numberAux.replace(",", ".");
+		double number = Double.valueOf(numberAux);
 		return number;
 	}
 	
