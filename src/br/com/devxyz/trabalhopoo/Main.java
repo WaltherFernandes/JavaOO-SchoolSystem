@@ -52,6 +52,9 @@ public class Main {
 				case 5: 
 					listarAlunos();
 					break;
+				case 6:
+					editarAlunos();
+					break;
 				default:
 					println("Opção inválida!");
 					wait(1);
@@ -71,7 +74,7 @@ public class Main {
 		String nome = scnString();
 		println("Digite o ano da disciplina: ");
 		int ano = scnInt();
-		println("Digite o numero de vagas da disciplina: ");
+		println("Digite o número de vagas da disciplina: ");
 		int numVagas = scnInt();
 		println("Digite o nome do professor da disciplina: ");
 		String nomeDoProfessor = scnString();
@@ -122,7 +125,7 @@ public class Main {
 		
 		sistema.cadastrarAluno(nome, nomeDoPai, nomeDaMae, endereco);
 	}
-	//List students
+	// List students
 	static void listarAlunos() {	
 		int maiorNome = 0;
 		int maiorNomeMae = 0;
@@ -153,6 +156,52 @@ public class Main {
 		}
 		wait(6);
 	}
+	// Edit students
+	static void editarAlunos() {
+		clear(15);
+		println("Digite o nome do aluno a ser editado!");
+		String nomeAluno = scnString();
+		Aluno alunoEditing = sistema.buscarAlunoPorNome(nomeAluno);
+		String messagePass = alunoEditing != null ? "Aluno encontrado!" : "Aluno não encontrado";
+		println(messagePass);
+		wait(2);
+		
+		while(true) {
+			clear(15);
+			println("0 - Voltar ao menu principal");
+			println("1 - Editar nome");
+			println("2 - Editar nome da mãe");
+			println("3 - Editar nome do pai");
+			println("4 - Editar endereço");
+			int opcao = getOpcao(); while(opcao == -1) { opcao = getOpcao(); }
+			
+			switch(opcao) {
+				case 0:
+					return;
+				case 1:
+					println("Digite o novo nome ao aluno " + nomeAluno + ": ");
+					String novoNome = scnString();
+					sistema.editNomeAluno(alunoEditing, novoNome);
+					break;
+				case 2:
+					println("Digite o novo nome da mãe d o aluno " + nomeAluno + ": ");
+					String novoNomeMae = scnString();
+					sistema.editNomeMae(alunoEditing, novoNomeMae);
+					break;
+				case 3:
+					println("Digite o novo nome do pai do aluno " + nomeAluno + ": ");
+					String novoNomePai = scnString();
+					sistema.editNomePai(alunoEditing, novoNomePai);
+					break;
+				case 4:
+					println("Digite o novo endereço da casa do aluno " + nomeAluno + ": ");
+					String novoEndereco = scnString();
+					sistema.editEndereco(alunoEditing, novoEndereco);
+					break;
+			}
+		}
+	}
+	
 	
 	
 	

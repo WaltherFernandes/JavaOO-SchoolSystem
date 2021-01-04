@@ -114,5 +114,64 @@ public class Sistema {
     	return messagePass;
     }
 
+    // Method responsible to find students on ArrayList by name
+    public Aluno buscarAlunoPorNome(String nomeAluno) {
+    	for( Aluno a : alunos ) {
+    		if(a.getNome().equals(nomeAluno)) {
+    			return a;
+    		}
+    	}
+    	
+    	return null;
+    }
 
+    
+    // Method responsible to change student name
+    public String editNomeAluno(Aluno alunoEditing, String nome) {
+    	String messagePass;
+    	int idAluno = alunos.indexOf(alunoEditing);
+    	Aluno alunoEditavel = alunos.get(idAluno);
+    	
+    	alunoEditavel.setNome(nome);
+    	
+    	messagePass = alunoEditavel == null ? "Falha ao alterar o nome" : "Alterado com sucesso!";
+    	
+    	return messagePass;
+    }
+    // Method responsible to change student mom's name
+    public String editNomeMae(Aluno alunoEditing, String nome) {
+    	String messagePass;
+    	int idAluno = alunos.indexOf(alunoEditing);
+    	Aluno alunoEditavel = alunos.get(idAluno);
+    	
+    	alunoEditavel.setNomeDaMae(nome);
+    	
+    	messagePass = alunoEditavel == null ? "Falha ao alterar o nome" : "Alterado com sucesso!";
+    	
+    	return messagePass;
+    }
+    // Method responsible to change student mom's name
+    public String editNomePai(Aluno alunoEditing, String nome) {
+    	String messagePass;
+    	int idAluno = alunos.indexOf(alunoEditing);
+    	Aluno alunoEditavel = alunos.get(idAluno);
+    	
+    	alunoEditavel.setNomeDoPai(nome);
+    	
+    	messagePass = alunoEditavel == null ? "Falha ao alterar o nome" : "Alterado com sucesso!";
+    	
+    	return messagePass;
+    }
+    // Method responsible to change student's house address
+    public String editEndereco(Aluno alunoEditing, String nome) {
+    	String messagePass;
+    	int idAluno = alunos.indexOf(alunoEditing);
+    	Aluno alunoEditavel = alunos.get(idAluno);
+    	
+    	alunoEditavel.setEndereco(nome);
+    	
+    	messagePass = alunoEditavel == null ? "Falha ao alterar o nome" : "Alterado com sucesso!";
+    	
+    	return messagePass;
+    }
 }
